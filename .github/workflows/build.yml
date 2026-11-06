@@ -7,13 +7,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Unzip project
+        run: |
+          unzip daftari.zip -d extracted_project
+          cd extracted_project
+          # إذا كان محتوى الzip مجلداً فرعياً، انتقل إليه
+          # يمكنك تعديل المسار إذا احتج تفتيش المجلد
+          
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
-      - run: flutter pub get
-      - run: flutter build apk --release
+          
+      - name: Install dependencies & Build APK
+        run: |
+          # البحث عن مجلد المشروع المستخرج وبناءه
+          cd extracted_project/* || cd extracted_project
+          flutter pub get
+          flutter build apk --release
+          
       - uses: actions/upload-artifact@v3
         with:
           name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: "**/build/app/outputs/flutter-apk/app-release.apk"
