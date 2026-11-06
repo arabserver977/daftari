@@ -1,4 +1,4 @@
-name: Build Flutter APK
+name: Build Flutter Web
 on:
   push:
     branches: [ main, master ]
@@ -8,23 +8,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Extract zip
+      - name: Extract zip if needed
         run: |
           mkdir -p extracted
-          unzip -q daftari.zip -d extracted
+          unzip -q daftari.zip -d extracted || true
 
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
 
-      - name: Build APK
+      - name: Build Web
         run: |
-          cd extracted/*/ || cd extracted
+          cd extracted/*/ || cd extracted || true
           flutter pub get
-          flutter build apk --release
+          flutter build web --release
 
       - uses: actions/upload-artifact@v3
         with:
-          name: release-apk
-          path: "**/build/app/outputs/flutter-apk/app-release.apk"
+          name: github-pages
+          path: "**/build/web"
